@@ -8,6 +8,15 @@ export type  FetchNotesResponse    = {
   totalPages: number;
   tag: string
 };
+export type NewNoteData = {
+  title: string;
+  content: string;
+  tag: string;
+};
+export type Category = {
+  id: string;
+  name: string;
+};
 
 axios.defaults.baseURL = "https://notehub-public.goit.study/api";
 const myToken = process.env.NEXT_PUBLIC_NOTEHUB_TOKEN;

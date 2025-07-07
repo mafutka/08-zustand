@@ -1,38 +1,53 @@
 'use client';
 
-import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { createNote } from '../../lib/api';
+import { createNote, NewNoteData } from '../../lib/api';
+import { useMutation } from '@tanstack/react-query';
+import { useNoteDraftStore } from '../../lib/store/noteStore';
 import css from './NoteForm.module.css';
 
 export const NoteForm = () => {
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [tag, setTag] = useState('');
   const router = useRouter();
 
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const { draft, setDraft, clearDraft } = useNoteDraftStore();
 
-    try {
-      await createNote({ title, content, tag });
-      router.push('/notes');
-    } catch (error) {
-      console.error('Failed to create note:', error);
-    }
+  const handleChange = (
+    event: React.ChangeEvent <HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
+  ) => {
+    setDraft({
+      ...draft,
+      [event.target.name]: event.target.value,
+    });
   };
 
+   const { mutate } = useMutation({
+    mutationFn: createNote,
+    onSuccess: () => {
+      clearDraft();
+      router.push('/notes/filter/all');
+    },
+  });
+
+  const handleSubmit = (formData: FormData) => {
+    const values = Object.fromEntries(formData) as NewNoteData;
+    mutate(values);
+  };
+
+  const handleCancel = () => router.push('/notes/filter/all');
+
+
   return (
-    <form className={css.form} onSubmit={handleSubmit}>
+    <form className={css.form} action={handleSubmit}>
       <div className={css.formGroup}>
-        <label htmlFor="title">Title</label>
+        <label htmlFor="title" >Title</label>
         <input
           id="title"
           name="title"
           type="text"
           className={css.input}
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          defaultValue={draft?.title}
+          // value={title}
+          onChange={handleChange}
           required
         />
       </div>
@@ -44,8 +59,9 @@ export const NoteForm = () => {
           name="content"
           rows={8}
           className={css.textarea}
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
+          defaultValue={draft?.content}
+          // value={content}
+          onChange={handleChange}
         />
       </div>
 
@@ -55,8 +71,9 @@ export const NoteForm = () => {
           id="tag"
           name="tag"
           className={css.select}
-          value={tag}
-          onChange={(e) => setTag(e.target.value)}
+          // value={tag}
+          defaultValue={draft?.tag}
+          onChange={handleChange}
           required
         >
           <option value="">Select a tag</option>
@@ -71,6 +88,8 @@ export const NoteForm = () => {
         <button type="submit" className={css.submitButton}>
           Create note
         </button>
+        <button type="button" onClick={handleCancel}>Cancel</button>
+        
       </div>
     </form>
   );
