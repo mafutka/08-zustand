@@ -1,4 +1,5 @@
 import  { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { NewNoteData } from '../api';
 
 type NoteDraftStore = {
@@ -14,11 +15,19 @@ const initialDraft: NewNoteData = {
   tag: 'Todo',
 };
 
-export const useNoteDraftStore = create<NoteDraftStore>()((set) => ({
-  draft: initialDraft,
-  setDraft: (note) => set(() => ({ draft: note })),
-  clearDraft: () => set(() => ({ draft: initialDraft })),
-}));
+export const useNoteDraftStore = create<NoteDraftStore>()(
+  persist(
+    (set) => ({
+      draft: initialDraft,
+      setDraft: (note) => set(() => ({ draft: note })),
+      clearDraft: () => set(() => ({ draft: initialDraft })),
+    }),
+    {
+       name: 'note-draft',
+       partialize: (state) => ({ draft: state.draft }),
+    }
+  )
+)
 
 
 // Створіть у папці lib/store файл noteStore.ts і реалізуйте в ньому
@@ -36,26 +45,18 @@ export const useNoteDraftStore = create<NoteDraftStore>()((set) => ({
 // Якщо draft є — завантажуйте саме його в початкові значення форми, 
 // якщо немає — то в початкові значення форми підставляйте об’єкт initialDraft.
 
-
-
 // У процесі створенні нотатки всі зміни мають зберігатися у draft 
 // в Zustand одразу при зміні полів.
 //  Для цього використайте подію елементів форми onChange
 //  і викликайте setDraft у сторі з актуальними даними.
 
-
-
 // При сабміті форми, коли нотатку успішно створено на сервері, 
 // очистіть draft через метод clearDraft. 
 // При цьому користувач має повернутися на попередній маршрут.
 
-
-
 // При натисканні кнопки «Cancel» draft не має очищатися, 
 // щоб можна було повернутися до створення пізніше з попереднім прогресом. 
 // При цьому користувач має повернутися на попередній маршрут.
-
-
 
 // Реалізуйте збереження чернетки нотатки в localStorage 
 // за допомогою middleware persist з пакету zustand/middleware. 
