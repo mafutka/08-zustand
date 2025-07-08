@@ -1,13 +1,24 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { fetchNotes } from '../../../../lib/api';
 import NotesClient from './Notes.client';
+import type { Metadata } from 'next';
 
 type Props = {
-  params: Promise<{ slug: string[] }>;
+  params: { slug: string[] };
 };
 
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const rawTag = params.slug?.[0] || '';
+  const tag = rawTag.toLowerCase() === 'all' ? '' : rawTag;
+
+  return {
+    title: `Notes: ${tag || 'All'}`,
+    description: `Filtered notes by tag: ${tag || 'All'}`,
+  };
+}
+
 export default async function NotesPage({ params }: Props) {
-  const { slug } = await params; 
+  const { slug } = params; 
 
   const queryClient = new QueryClient();
 
@@ -28,9 +39,9 @@ export default async function NotesPage({ params }: Props) {
   );
 }
 
-// Для файлу сторінки app\\notes\\filter\\[...slug]\\page.tsx 
-// реалізуйте експорт асинхронної функції generateMetadata,
-//  яка повертатиме об'єкт з полями title та description. 
-//  Значення цих полів мають містити назву і короткий опис сторінки 
-//  з вказанням обраного фільтру. Додайте також Open Graph мета-теги title,
-//   description, url та imagesз відповідними значеннями.
+// Критичні проблеми:
+
+// Функція generateMetadata повністю відсутня. 
+// Немає експорту асинхронної функції generateMetadata, 
+// яка повертає Promise<Metadata>, 
+// а також відсутня будь-яка логіка динамічних метаданих.

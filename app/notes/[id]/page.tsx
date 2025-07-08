@@ -1,13 +1,14 @@
 import NoteDetailsClient from './NoteDetails.client';
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { fetchNoteById } from '../../../lib/api';
+import type { Metadata } from 'next';
 
 type Props = {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 };
 
-export async function generateMetadata ({params}: Props) {
-  const { id } = await params;
+export async function generateMetadata ({params}: Props): Promise<Metadata> {
+  const { id } = params;
   const note = await fetchNoteById(id);
 
   return { 
@@ -46,9 +47,7 @@ export default async function NoteDetailsPage({
   );
 }
 
-// Для файлу сторінки з деталями app\\notes\\[id]\\page.tsx
-// реалізуйте експорт асинхронної функції generateMetadata, 
-// яка повертатиме об'єкт з полями title та description. 
-// Значення цих полів мають містити заголовок і короткий опис відповідної нотатки.
-//  Додайте також Open Graph мета-теги title, description, 
-//  url та imagesз відповідними значеннями.
+// Критичні проблеми:
+
+// У функції generateMetadata відсутня явна анотація типу повернення Promise<Metadata>.
+//  Ця анотація необхідна для типобезпеки та ясності.
