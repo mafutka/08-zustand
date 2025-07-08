@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Create Note',
     description: 'Create a new note using the form. Add title, content, and tag.',
+    url: "https://08-zustand-umber.vercel.app/notes/action/create",
     images: [
       {
         url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
@@ -33,7 +34,6 @@ const CreateNote = () => {
 
 export default CreateNote;
 
-// Критичні проблеми:
+// В об'єкті openGraph відсутня обов'язкова властивість url,
+//  яка має визначати канонічну URL-адресу сторінки створення замітки.
 
-// Відсутній об'єкт metadata. Не відбувається експорт об'єкта metadata, 
-// типізованого як Metadata з пакету next, і не надано метаданих SEO або Open Graph.

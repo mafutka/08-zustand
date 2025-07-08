@@ -15,6 +15,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `Notes: ${tag || 'All'}`,
     description: `Filtered notes by tag: ${tag || 'All'}`,
+     openGraph: {
+      title: `Note: ${tag}`,
+      description: `Notes are sorted by ${tag}`,
+      url: `https://notehub.app/notes/filter/${(await params).slug.join("/")}`,
+      images: [
+        {
+          url: 'https://ac.goit.global/fullstack/react/notehub-og-meta.jpg',
+          width: 1200,
+          height: 630,
+          alt: `NoteHub img`,
+        },
+      ],
+    },
   };
 }
 
@@ -40,9 +53,6 @@ export default async function NotesPage({ params }: Props) {
   );
 }
 
-// Критичні проблеми:
-
-// Функція generateMetadata повністю відсутня. 
-// Немає експорту асинхронної функції generateMetadata, 
-// яка повертає Promise<Metadata>, 
-// а також відсутня будь-яка логіка динамічних метаданих.
+// Повернутий об'єкт метаданих з generateMetadata не містить обов'язкової властивості 
+// openGraph з вкладеними полями (title, description, url та images). 
+// Ця відсутність означає, що метадані неповні і не повністю відповідають вимогам SEO та соціального поширення.

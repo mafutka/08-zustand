@@ -7,7 +7,10 @@ type PageProps = {
   params: Promise<{ id: string }>;
 };
 
+  
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+                                                          // ОСЬ Є ПРОМІС МЕТАДАТА
+                                                          // уточніть, що саме ще має бути
   const { id } = await params;
   const note = await fetchNoteById(id);
 
@@ -45,7 +48,5 @@ export default async function NoteDetailsPage({ params }: PageProps) {
     </HydrationBoundary>
   );
 }
-// Критичні проблеми:
-
-// У функції generateMetadata відсутня явна анотація типу повернення Promise<Metadata>.
-//  Ця анотація необхідна для типобезпеки та ясності.
+// У функції generateMetadata відсутня явна анотація повертаємого типу Promise<Metadata>.
+//  Ця анотація необхідна для безпеки типів та ясності.
