@@ -3,15 +3,15 @@ import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query
 import { fetchNoteById } from '../../../lib/api';
 import type { Metadata } from 'next';
 
-type Props = {
-  params: { id: string };
+type PageProps = {
+  params: Promise<{ id: string }>;
 };
 
-export async function generateMetadata ({params}: Props): Promise<Metadata> {
-  const { id } = params;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
   const note = await fetchNoteById(id);
 
-  return { 
+  return {
     title: `Note: ${note.title}`,
     description: note.content.slice(0, 30),
     openGraph: {
@@ -27,17 +27,16 @@ export async function generateMetadata ({params}: Props): Promise<Metadata> {
         },
       ],
     },
-  }
+  };
 }
 
-export default async function NoteDetailsPage({
- params}: Props) {
+export default async function NoteDetailsPage({ params }: PageProps) {
   const { id } = await params;
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ['note', id], 
-    queryFn: () => fetchNoteById(id),  
+    queryKey: ['note', id],
+    queryFn: () => fetchNoteById(id),
   });
 
   return (
@@ -46,7 +45,6 @@ export default async function NoteDetailsPage({
     </HydrationBoundary>
   );
 }
-
 // Критичні проблеми:
 
 // У функції generateMetadata відсутня явна анотація типу повернення Promise<Metadata>.

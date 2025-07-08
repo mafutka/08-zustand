@@ -1,15 +1,16 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { fetchNotes } from '../../../../lib/api';
 import NotesClient from './Notes.client';
+
 import type { Metadata } from 'next';
 
 type Props = {
-  params: { slug: string[] };
+  params: Promise<{ slug: string[] }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const rawTag = params.slug?.[0] || '';
-  const tag = rawTag.toLowerCase() === 'all' ? '' : rawTag;
+    const { slug } = await params; 
+  const tag = slug[0] === "all" ? "All notes" : slug[0];
 
   return {
     title: `Notes: ${tag || 'All'}`,
@@ -18,7 +19,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function NotesPage({ params }: Props) {
-  const { slug } = params; 
+  const { slug } = await params; 
 
   const queryClient = new QueryClient();
 
